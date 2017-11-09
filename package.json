@@ -1,0 +1,12 @@
+{
+  "name": "xel-extend",
+  "version": "1.0.0",
+  "description": "Dynamic hook for Xel Toolkit",
+  "main": "xel.js",
+  "keywords": [
+    "Electron",
+    "Windows"
+  ],
+  "author": "ImportPython - Brendan Fuller (http://brendanfuller.com)",
+  "license": "MIT"
+}
