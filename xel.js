@@ -132,7 +132,7 @@ class Tabs { }
 /*---------------------------------------------------*/
 class MenuTabs {
   constructor(element) {
-    this.me = element
+    this.me = document.querySelector(element)
     this.name = element
 
     this.tabs = {}
