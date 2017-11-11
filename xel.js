@@ -130,7 +130,7 @@ class Buttons {
 }
 class Tabs { }
 /*---------------------------------------------------*/
-class MenuTabs {
+class DocTabs {
   constructor(element) {
     this.me = document.querySelector(element)
     this.name = element
@@ -1394,7 +1394,7 @@ module.exports = {
   Button: Button,
   Drawer: Drawer,
   MenuItem: MenuItem,
-  MenuTabs: MenuTabs,
+  DocTabs: DocTabs,
   Tabs: Tabs,
 
   ContextMenu: ContextMenu,
