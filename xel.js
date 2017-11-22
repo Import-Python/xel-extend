@@ -1236,7 +1236,6 @@ module.exports = {
   Tabs: Tabs,
 
   ContextMenu: ContextMenu,
-  DialogPreview: DialogPreview,
   DialogInput: DialogInput,
   TreeView: TreeView,
   Prompt: Prompt
