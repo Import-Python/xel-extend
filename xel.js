@@ -536,61 +536,57 @@ class ContextMenu {
 /**---------------------------------*/
 class Dialog {
   constructor(element) {
-    this.me = element
-  }
-  setObject(element) {
-    this.me = document.querySelector(element)
-  }
-  //Disable the dialog
-  setDisabled(bool) {
-    this.me.disabled = bool
-  }
-  //Apened html to the dialog
-  appenedHTML(html) {
-    this.me.insertAdjacentHTML('beforeend', html)
+    if (element != null) {
+      this.dialog = element
+    } else {
+      this.id = this._getID()
+      document.querySelector("body").insertAdjacentHTML("beforeend", `<x-dialog id="dialog-${this.id}"></x-dialog>`)
+      this.dialog = document.querySelector("body").querySelector(`#dialog-${this.id}`)
+    }
   }
   //Open the dialog
   open() {
-    this.me.opened = true
+    this.dialog.opened = true
   }
   //Close the dialog
   close() {
-    this.me._close()
-  }
-  //Query the element
-  query() {
-    return this.me
+    this.dialog._close()
   }
   //Return opened
   get() {
-    return this.me.opened
+    return this.dialog.opened
   }
   remove() {
-    this.me.remove()
+    this.dialog.remove()
   }
   setTop(percent) {
-    this.me.style.top = percent
+    this.dialog.style.top = percent
   }
   //Disabled close of dialog with overlay
   disableOverlayClose() {
-    this.me._onOverlayClick = () => { }
+    this.dialog._onOverlayClick = () => { }
   }
   onOverlay(func) {
-    this.me._onOverlayClick = func;
+    this.dialog._onOverlayClick = func;
   }
   onEscape(func) {
-    this.me._onKeyDown = () => { };
+    this.dialog._onKeyDown = () => { };
     this.escapeFunc = func;
-    this.me.addEventListener("keydown", (event) => this._onKeyDown(event));
+    this.dialog.addEventListener("keydown", (event) => this._onKeyDown(event));
   }
   /**  'Private' Methods **/
+  _getID() {
+    return ([1e7] + 1e11).replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    )
+  }
   _onKeyDown(event) {
     if (event.key === "Escape") {
       this.escapeFunc.call();
     }
     if (event.key === "Tab") {
       // Prevent user from moving focus outside the dialog
-      let focusableElements = [...this.me.querySelectorAll("*")].filter($0 => $0.tabIndex >= 0);
+      let focusableElements = [...this.dialog.querySelectorAll("*")].filter($0 => $0.tabIndex >= 0);
       if (focusableElements.length > 0) {
         let firstFocusableElement = focusableElements[0]
         let lastFocusableElement = focusableElements[focusableElements.length - 1]
@@ -863,165 +859,7 @@ class TitleMenubar extends Window {
     }
   }
 }
-class DialogPreview extends Dialog {
-  constructor(element) {
-    super(element)
 
-    //Defined Variables
-    this.page = 0
-    this.total = 0
-    this.useProgressBar = false
-
-    //Grab the main area and footer of the dialog
-    this.main = this.me.querySelector("main") //Grab main div
-    this.footer = this.me.querySelector("footer")
-
-    //List all pages in the DialogPreview using a x-box tag
-    this.pages = this.main.querySelectorAll('x-box')
-
-    //Loop through them pages, hide most pages, add some style.
-    for (var i = 0; i < this.pages.length; ++i) {
-      this.total++;
-      if (i != this.page) {
-        this.pages[i].style.display = "none"
-      } else {
-        this.pages[i].style.display = "block"
-      }
-      this.pages[i].style.minHeight = "100px"
-      this.pages[i].setAttribute("page", i)
-    }
-    //=-=-=-=-=-=-=-=-=-=//
-
-    //Select the buttons for prev/next
-    this.next = this.footer.querySelector("#next")
-    this.prev = this.footer.querySelector("#prev")
-
-    //Add event Listeners on the buttons if they are aval
-    var _this = this;
-    if (this.next != undefined) {
-      this.stateNext = true;
-      this.next.addEventListener('click', () => {
-        _this._next()
-        if (_this.continue == true) {
-          if (_this.stateNext == false) {
-            _this.runContinue()
-          }
-        }
-      });
-    } else {
-      console.log("[xel.js][DialogPreview] No NEXT button!");
-    }
-    if (this.prev != undefined) {
-      this.prev.disabled = true
-      this.prev.addEventListener('click', () => {
-        _this._prev()
-      });
-    }
-    else {
-      console.log("[xel.js][DialogPreview] No PREV button!");
-    }
-  }
-  useBar() {
-    this.main.insertAdjacentHTML('beforeend', '<x-box style="padding-top: 10px;"><x-progressbar value="1" max="' + this.total + '" style="--bar-background: black;"></x-progressbar></x-box>');
-    this.bar = this.me.querySelector("x-progressbar")
-    this.use = true
-  }
-  setContinue(func) {
-    this.continue = true
-    this.me._onOverlayClick = () => { }
-    this.runContinue = func
-  }
-  _next() {
-    var selected = this.page
-    var next = this.page + 1
-
-    if (next < (this.total)) {
-      this.pages[selected].style.display = "none"
-      this.pages[next].style.display = "block"
-      this.page = next
-      if (next == (this.total - 1)) {
-        this._disableNext()
-      }
-      this._enabledPrev()
-    }
-    this._updateProgressBar()
-  }
-  _prev() {
-    var selected = this.page
-    var prev = this.page - 1
-
-    if (prev > -1) {
-      this.pages[selected].style.display = "none"
-      this.pages[prev].style.display = "block"
-      this.page = prev
-      if (prev == 0) {
-        this._disablePrev()
-      }
-      this._enabledNext()
-    }
-    this._updateProgressBar()
-  }
-  _next() {
-    var selected = this.page
-    var next = this.page + 1
-
-    if (next < (this.total)) {
-      this.pages[selected].style.display = "none"
-      this.pages[next].style.display = "block"
-      this.page = next
-      if (next == (this.total - 1)) {
-        this._disableNext()
-      }
-      this._enabledPrev()
-    }
-    this._updateProgressBar()
-  }
-  _prev() {
-    var selected = this.page
-    var prev = this.page - 1
-
-    if (prev > -1) {
-      this.pages[selected].style.display = "none"
-      this.pages[prev].style.display = "block"
-      this.page = prev
-      if (prev == 0) {
-        this._disablePrev()
-      }
-      this._enabledNext()
-    }
-    this._updateProgressBar()
-  }
-  _updateProgressBar() {
-    if (this.use == true) {
-      this.bar.value = this.page + 1
-    }
-  }
-  _disableNext() {
-    if (this.continue) {
-      var _this = this;
-      setTimeout(function () {
-        _this.stateNext = false
-      }, 100);
-      this.next.innerHTML = "Continue"
-    } else {
-      this.next.disabled = true
-    }
-  }
-  _disablePrev() {
-    this.prev.disabled = true
-  }
-  _enabledNext() {
-    if (this.continue) {
-      this.next.innerHTML = '<x-icon name="keyboard-arrow-right"></x-icon>'
-      this.stateNext = true
-    } else {
-      this.next.disabled = false
-    }
-  }
-  _enabledPrev() {
-    this.prev.disabled = false
-  }
-}
 
 class TreeNode {
   constructor(element, parent, id) {
