@@ -540,17 +540,17 @@ class Dialog {
       this.dialog = element
     } else {
       this.id = this._getID()
-      document.querySelector("body").insertAdjacentHTML("beforeend", `<x-dialog id="dialog-${this.id}"></x-dialog>`)
+      document.querySelector("body").insertAdjacentHTML("beforeend", `<dialog id="dialog-${this.id}"></dialog>`)
       this.dialog = document.querySelector("body").querySelector(`#dialog-${this.id}`)
     }
   }
   //Open the dialog
   open() {
-    this.dialog.opened = true
+    this.dialog.showModal()
   }
   //Close the dialog
   close() {
-    this.dialog._close()
+    this.dialog.close()
   }
   //Return opened
   get() {
@@ -630,7 +630,12 @@ class Drawer {
     )
   }
 }
-class Popover { }
+class Popover { 
+  constructor(element)  {
+      this.me = element
+      me.open()
+  }
+}
 
 /**---------------------------------*/
 class CheckBox { }
@@ -1090,7 +1095,7 @@ class TreeView {
 class DialogInput {
   constructor() {
     this.id = this._getID()
-    let template = `<x-dialog id="dialog-input-${this.id}" class="dialog-input" style="border-radius: 20px;">
+    let template = `<dialog id="dialog-input-${this.id}" class="dialog-input" style="border-radius: 20px;">
         <main>
           <x-label id="dialog-input-title"></x-label>
           <x-box style="margin-top: 5px;">
@@ -1099,7 +1104,7 @@ class DialogInput {
               </x-input>
           </x-box>
         </main>
-    </x-dialog>`
+    </dialog>`
     document.querySelector("body").insertAdjacentHTML("beforeend", template)
     this.dialog = document.querySelector("body").querySelector(`#dialog-input-${this.id}`)
     this.instance = new Dialog(this.dialog)
@@ -1201,6 +1206,7 @@ class Prompt extends Drawer {
 
     // If CANCEL button is click, just close the dialog
     this.btnCancel.addEventListener("click", () => {
+      me._finished(null)
       me.close()
     })
     this.btnYes.addEventListener("click", () => {
@@ -1221,6 +1227,8 @@ class Prompt extends Drawer {
   /* Internal method that's repalced by users method */
   _finished(response) {}
 }
+
+
 
 module.exports = {
   Window: Window,
